@@ -1,28 +1,25 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $dbname = "paytrack";
-    private $username = "root";
-    private $password = "";
-    private $conn;
 
-    public function getConnection() {
-        $this->conn = null;
+    private static $pdo = null;
 
-        try {
-            $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->dbname,
-                $this->username,
-                $this->password
-            );
+    public static function getConnection() {
 
-            // Activar modo de errores
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        if (self::$pdo === null) {
+            $host = "localhost";
+            $dbname = "paytrack";
+            $user = "root";
+            $pass = "";
 
-        } catch (PDOException $e) {
-            echo "Error en la conexión: " . $e->getMessage();
+            try {
+                self::$pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
+                self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                die("Error de conexión: " . $e->getMessage());
+            }
         }
 
-        return $this->conn;
+        return self::$pdo;
     }
 }
+
