@@ -9,6 +9,7 @@ $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';  // success o error
     <meta charset="UTF-8">
     <title>Registro - PayTrack</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <script src="/public/js/formularioRegistro.js" defer></script>
 </head>
 <body class="bg-light">
 
@@ -31,7 +32,7 @@ $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';  // success o error
 
                         <div class="mb-3">
                             <label class="form-label">Nombre</label>
-                            <input type="text" name="nombre" class="form-control" required>
+                            <input type="text" name="nombre" class="form-control" required minlength="3">
                         </div>
 
                         <div class="mb-3">
@@ -41,12 +42,19 @@ $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';  // success o error
 
                         <div class="mb-3">
                             <label class="form-label">Contraseña</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <input type="password" name="password" class="form-control" required minlength="6">
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100">Registrar</button>
 
                     </form>
+
+                    <div class="text-center mt-2">
+                        <small>
+                            ¿Ya tienes cuenta?
+                            <a href="/auth/login">Iniciar sesión</a>
+                        </small>
+                    </div>
 
                 </div>
             </div>

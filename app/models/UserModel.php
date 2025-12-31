@@ -19,7 +19,7 @@ class UserModel {
             $stmt->execute(['email' => $email]);
             return $stmt->fetch(PDO::FETCH_ASSOC);  // devuelve array o false
         } catch (PDOException $e) {
-            return false;
+            throw $e;
         }
     }
 

@@ -15,6 +15,14 @@ switch ($url) {
         require_once __DIR__ . '/../views/auth/login.php';
         break;
 
+    case 'dashboard':
+    require_once __DIR__ . '/../views/auth/dashboard.php';
+    break;
+
+    case 'auth/login_action':
+    require_once __DIR__ . '/../views/actions/login_action.php';
+    break;
+
     case 'auth/register_action':
     require_once __DIR__ . '/../views/actions/register_action.php';
     break;
