@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : '';
 
@@ -16,7 +17,7 @@ switch ($url) {
         break;
 
     case 'dashboard':
-    require_once __DIR__ . '/../views/auth/dashboard.php';
+    require_once __DIR__ . '/../views/dashboard/overview.php';
     break;
 
     case 'auth/login_action':
@@ -27,6 +28,9 @@ switch ($url) {
     require_once __DIR__ . '/../views/actions/register_action.php';
     break;
 
+    case 'auth/logout':
+    require_once __DIR__ . '/../views/actions/logout_action.php';
+    break;
 
     default:
         echo "404 - Página no encontrada";
