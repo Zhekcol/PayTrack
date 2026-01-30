@@ -3,13 +3,22 @@
 
     <ul class="nav nav-pills flex-column gap-2">
         <li class="nav-item">
-            <a href="/dashboard" class="nav-link text-white">📊 Resumen</a>
+            <a href="/dashboard" 
+                class="nav-link text-white <?= ($_GET['url'] ?? '') === 'dashboard' ? 'active' : '' ?>">
+                📊 Resumen
+            </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-white">💰 Ingresos</a>
+            <a href="/ingresos"
+                class="nav-link text-white <?= ($_GET['url'] ?? '') === 'ingresos' ? 'active' : '' ?>">
+                💰 Ingresos
+            </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-white">💸 Gastos</a>
+            <a href="/gastos"
+                class="nav-link text-white <?= ($_GET['url'] ?? '') === 'gastos' ? 'active' : '' ?>">
+                💸 Gastos
+            </a>
         </li>
         <li class="nav-item mt-4">
             <a href="/auth/logout" class="nav-link text-danger">🚪 Cerrar sesión</a>

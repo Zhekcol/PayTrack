@@ -10,12 +10,37 @@ $usuario = $_SESSION['usuario'];
 
     <h2 class="mb-4">Bienvenido, <?= htmlspecialchars($usuario['nombre']); ?> 👋</h2>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <p class="mb-1"><strong>Correo:</strong> <?= htmlspecialchars($usuario['email']); ?></p>
-            <p class="text-muted">Este será el resumen general del sistema.</p>
+   <div class="row mt-4">
+
+    <div class="col-md-4">
+        <div class="card text-bg-success shadow">
+            <div class="card-body">
+                <h5>Ingresos</h5>
+                <h3>$<?= number_format($ingresos, 2) ?></h3>
+            </div>
         </div>
     </div>
+
+    <div class="col-md-4">
+        <div class="card text-bg-danger shadow">
+            <div class="card-body">
+                <h5>Gastos</h5>
+                <h3>$<?= number_format($gastos, 2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-bg-primary shadow">
+            <div class="card-body">
+                <h5>Balance</h5>
+                <h3>$<?= number_format($balance, 2) ?></h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
 </div>
 

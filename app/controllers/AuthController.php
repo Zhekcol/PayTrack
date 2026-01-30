@@ -64,10 +64,11 @@ class AuthController
 
         // LOGIN OK → guardar sesión
         $_SESSION['usuario'] = [
-            'id'     => $usuario['id'],
-            'nombre' => $usuario['nombre'],
-            'email'  => $usuario['email']
+            'id_usuario' => $usuario['id_usuario'], 
+            'nombre'     => $usuario['nombre'],
+            'email'      => $usuario['email']
         ];
+
 
         return ['status' => 'success', 'mensaje' => 'Inicio de sesión exitoso'];
     }
