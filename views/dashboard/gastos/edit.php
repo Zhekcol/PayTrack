@@ -22,6 +22,16 @@
                     <input type="hidden" name="id" value="<?= $gasto['id']; ?>">
 
                     <div class="mb-3">
+                        <label class="form-label">Categoría</label>
+                        <input 
+                            type="text"
+                            name="categoria"
+                            class="form-control"
+                            value="<?= htmlspecialchars($gasto['categoria']); ?>"
+                            required>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label">Descripción</label>
                         <input 
                             type="text"

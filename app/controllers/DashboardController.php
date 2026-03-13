@@ -23,4 +23,36 @@ class DashboardController {
 
         require_once __DIR__ . '/../../views/dashboard/overview.php';
     }
+
+   public function obtenerGastosMensuales()
+    {
+        header('Content-Type: application/json');
+
+        $usuario_id = $_SESSION['usuario']['id_usuario'];
+
+        $datos = $this->model->gastosPorMes($usuario_id);
+
+        if (!$datos) {
+            $datos = [];
+        }
+
+        echo json_encode($datos);
+        exit;
+    }
+
+    public function obtenerGastosCategoria()
+    {
+        header('Content-Type: application/json');
+
+        $usuario_id = $_SESSION['usuario']['id_usuario'];
+
+        $datos = $this->model->gastosPorCategoria($usuario_id);
+
+        if(!$datos){
+            $datos = [];
+        }
+
+        echo json_encode($datos);
+        exit;
+    }
 }

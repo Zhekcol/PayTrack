@@ -112,7 +112,17 @@ switch ($url) {
         $controller->delete();
         break;
 
+    case 'obtener-gastos-mensuales':
+        require_once '../app/controllers/DashboardController.php';
+        $controller = new DashboardController($pdo);
+        $controller->obtenerGastosMensuales();
+    exit;
 
+    case 'obtener-gastos-categoria':
+        require_once '../app/controllers/DashboardController.php';
+        $controller = new DashboardController($pdo);
+        $controller->obtenerGastosCategoria();
+    break;
 
 
     default:

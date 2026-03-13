@@ -21,11 +21,12 @@ class GastoController
     {
         $idUsuario = $_SESSION['usuario']['id_usuario'];
 
+        $categoria = $_POST['categoria'];
         $descripcion = $_POST['descripcion'];
         $monto = $_POST['monto'];
         $fecha = $_POST['fecha'];
 
-        $this->model->crear($idUsuario, $descripcion, $monto, $fecha);
+        $this->model->crear($idUsuario, $categoria, $descripcion, $monto, $fecha);
 
         header("Location: /gastos?success=1");
         exit;
@@ -62,6 +63,7 @@ class GastoController
         }
 
         $id = $_POST['id'] ?? null;
+        $categoria = trim($_POST['categoria'] ?? '');
         $descripcion = trim($_POST['descripcion'] ?? '');
         $monto = $_POST['monto'] ?? 0;
         $fecha = $_POST['fecha'] ?? '';
@@ -72,6 +74,7 @@ class GastoController
             $this->model->actualizar(
                 $id,
                 $idUsuario,
+                $categoria,
                 $descripcion,
                 $monto,
                 $fecha

@@ -21,14 +21,15 @@ class GastoModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function crear($idUsuario, $descripcion, $monto, $fecha)
+    public function crear($idUsuario, $categoria, $descripcion, $monto, $fecha)
     {
-        $sql = "INSERT INTO gastos (id_usuario, descripcion, monto, fecha)
-                VALUES (:id_usuario, :descripcion, :monto, :fecha)";
+        $sql = "INSERT INTO gastos (id_usuario, categoria, descripcion, monto, fecha)
+                VALUES (:id_usuario, :categoria, :descripcion, :monto, :fecha)";
 
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
             'id_usuario' => $idUsuario,
+            'categoria' => $categoria,
             'descripcion' => $descripcion,
             'monto' => $monto,
             'fecha' => $fecha
@@ -63,14 +64,15 @@ class GastoModel
     }
 
 
-    public function actualizar($id, $idUsuario, $descripcion, $monto, $fecha)
+    public function actualizar($id, $idUsuario, $categoria, $descripcion, $monto, $fecha)
     {
         $sql = "UPDATE gastos 
-                SET descripcion = :descripcion, monto = :monto, fecha = :fecha
+                SET categoria = :categoria, descripcion = :descripcion, monto = :monto, fecha = :fecha
                 WHERE id = :id AND id_usuario = :id_usuario";
 
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
+            'categoria' => $categoria,
             'descripcion' => $descripcion,
             'monto' => $monto,
             'fecha' => $fecha,
@@ -89,13 +91,14 @@ class GastoModel
         }
 
         $id = $_POST['id'] ?? null;
+        $categoria = $_POST['categoria'] ?? '';
         $descripcion = $_POST['descripcion'] ?? '';
         $monto = $_POST['monto'] ?? 0;
         $fecha = $_POST['fecha'] ?? '';
         $idUsuario = $_SESSION['id_usuario'];
 
         if ($id) {
-            $this->pdo->actualizar($id, $idUsuario, $descripcion, $monto, $fecha);
+            $this->pdo->actualizar($id, $idUsuario, $categoria, $descripcion, $monto, $fecha);
             $_SESSION['success'] = "Gasto actualizado correctamente";
         }
 

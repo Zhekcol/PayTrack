@@ -22,4 +22,38 @@ class DashboardModel {
         $stmt->execute([$id_usuario]);
         return $stmt->fetchColumn();
     }
+
+    public function gastosPorMes($id_usuario)
+    {
+        $sql = "SELECT 
+                MONTH(fecha) as mes,
+                SUM(monto) as total
+                FROM gastos
+                WHERE id_usuario = :id_usuario
+                GROUP BY MONTH(fecha)
+                ORDER BY mes";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id_usuario', $id_usuario);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function gastosPorCategoria($usuario_id)
+    {
+        $sql = "SELECT 
+                    categoria,
+                    SUM(monto) as total
+                FROM gastos
+                WHERE id_usuario = :usuario_id
+                GROUP BY categoria
+                ORDER BY total DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':usuario_id', $usuario_id);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
