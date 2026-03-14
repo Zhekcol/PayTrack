@@ -124,6 +124,12 @@ switch ($url) {
         $controller->obtenerGastosCategoria();
     break;
 
+    case 'obtener-ingresos-gastos-mensuales':
+    require_once '../app/controllers/DashboardController.php';
+    $controller = new DashboardController($pdo);
+    $controller->obtenerIngresosYGastosMensuales();
+    break;
+
 
     default:
         echo "404 - Página no encontrada";

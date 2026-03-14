@@ -1,6 +1,67 @@
-.grafica-categorias{
-    width:100%;
-    max-width:500px;
-    height:400px;
-    margin:auto;
+/* Contenedor principal */
+.col-12.col-md-10.p-4 {
+    padding: 2rem !important;
+}
+
+/* Grid de gráficas - con !important para asegurar */
+.grid-graficas {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 30px !important;
+    margin-top: 50px !important;
+}
+
+/* Contenedor de cada gráfica */
+.contenedor-grafica {
+    position: relative;
+    width: 100%;
+    height: 320px;
+}
+
+/* Cards */
+.grid-graficas .card {
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.311);
+    border: none;
+    overflow: hidden;
+    margin-bottom: 0; /* Por si Bootstrap agrega margen */
+}
+
+/* Body de las cards */
+.grid-graficas .card-body {
+    padding: 25px;
+}
+
+/* Títulos */
+.grid-graficas .card-body h5 {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .grid-graficas {
+        gap: 25px !important;
+    }
+    
+    .contenedor-grafica {
+        height: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-graficas {
+        grid-template-columns: 1fr !important;
+        gap: 25px !important;
+    }
+    
+    .contenedor-grafica {
+        height: 260px;
+    }
+    
+    .grid-graficas .card-body {
+        padding: 20px;
+    }
 }

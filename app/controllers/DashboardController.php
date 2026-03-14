@@ -55,4 +55,16 @@ class DashboardController {
         echo json_encode($datos);
         exit;
     }
+
+    public function obtenerIngresosYGastosMensuales()
+    {
+        header('Content-Type: application/json');
+
+        $usuario_id = $_SESSION['usuario']['id_usuario'];
+
+        $datos = $this->model->ingresosYGastosPorMes($usuario_id);
+
+        echo json_encode($datos);
+        exit;
+    }
 }

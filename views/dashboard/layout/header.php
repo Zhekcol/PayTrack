@@ -3,7 +3,11 @@ if (!isset($_SESSION['usuario'])) {
     header("Location: /auth/login");
     exit;
 }
-$base_url = "/PayTrack/public/";
+// Detectar la URL base automáticamente
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'];
+$script_name = $_SERVER['SCRIPT_NAME'];
+$base_url = $protocol . $host . str_replace(basename($script_name), '', $script_name);
 
 // Evitar cache
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");

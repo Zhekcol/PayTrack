@@ -10,74 +10,76 @@ $usuario = $_SESSION['usuario'];
 
     <h2 class="mb-4">Bienvenido, <?= htmlspecialchars($usuario['nombre']); ?> 👋</h2>
 
-   <div class="row mt-4">
-
-    <div class="col-md-4">
-        <div class="card text-bg-success shadow">
-            <div class="card-body">
-                <h5>Ingresos</h5>
-                <h3>$<?= number_format($ingresos, 0, ',', '.') ?></h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card text-bg-danger shadow">
-            <div class="card-body">
-                <h5>Gastos</h5>
-                <h3>$<?= number_format($gastos, 0, ',', '.') ?></h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card text-bg-primary shadow">
-            <div class="card-body">
-                <h5>Balance</h5>
-                <h3>$<?= number_format($balance, 0, ',', '.') ?></h3>
-            </div>
-        </div>
-    </div>
-
     <div class="row mt-4">
 
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-body">
+        <div class="col-md-4">
+            <div class="card text-bg-success shadow">
+                <div class="card-body">
+                    <h5>Ingresos</h5>
+                    <h3>$<?= number_format($ingresos, 0, ',', '.') ?></h3>
+                </div>
+            </div>
+        </div>
 
-                <h5 class="mb-3">Ingresos vs Gastos</h5>
+        <div class="col-md-4">
+            <div class="card text-bg-danger shadow">
+                <div class="card-body">
+                    <h5>Gastos</h5>
+                    <h3>$<?= number_format($gastos, 0, ',', '.') ?></h3>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-md-4">
+            <div class="card text-bg-primary shadow">
+                <div class="card-body">
+                    <h5>Balance</h5>
+                    <h3>$<?= number_format($balance, 0, ',', '.') ?></h3>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- cerrar el row -->
+<div class="container-fluid mt-4">
+    <div class="grid-graficas">
+
+    <div class="card">
+        <div class="card-body">
+            <h5>Ingresos vs Gastos</h5>
+            <div class="contenedor-grafica">
                 <canvas id="graficaFinanzas"></canvas>
-                <p id="mensajeSinDatos" class="text-muted text-center"></p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-8 mt-4">
-        <div class="card shadow">
-            <div class="card-body">
-
-                <h5 class="mb-3">Gastos por Mes</h5>
-
-                <canvas id="graficaGastosMes"></canvas>
-                <p id="mensajeSinDatos" class="text-muted text-center"></p>
             </div>
         </div>
     </div>
 
-    <div class="card mt-4">
+    <div class="card">
         <div class="card-body">
             <h5>Gastos por categoría</h5>
-            <div class="grafica-categorias">
+            <div class="contenedor-grafica">
                 <canvas id="graficaCategorias"></canvas>
             </div>
-            <p id="mensajeCategorias" class="text-muted text-center"></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5>Gastos por mes</h5>
+            <div class="contenedor-grafica">
+                <canvas id="graficaGastosMes"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5>Ingresos vs Gastos por mes</h5>
+            <div class="contenedor-grafica">
+                <canvas id="graficaComparativa"></canvas>
+            </div>
         </div>
     </div>
 
     </div>
-
-</div>
-
 </div>
 
 <?php require 'layout/footer.php'; ?>
@@ -108,11 +110,7 @@ if (canvasFinanzas) {
         },
         options: {
             responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+            maintainAspectRatio: false
         }
     });
 
@@ -173,11 +171,7 @@ fetch('/paytrack/public/index.php?url=obtener-gastos-mensuales')
             },
             options: {
                 responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+                maintainAspectRatio: false
             }
         });
 
@@ -245,12 +239,57 @@ fetch('/paytrack/public/index.php?url=obtener-gastos-categoria')
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+                maintainAspectRatio: false
+            }
+        });
+
+    }
+
+});
+
+fetch('/paytrack/public/index.php?url=obtener-ingresos-gastos-mensuales')
+.then(res => res.json())
+.then(data => {
+
+    const meses = [
+        "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+        "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+    ];
+
+    let ingresosMensuales = [];
+    let gastosMensuales = [];
+
+    data.forEach(item => {
+        ingresosMensuales.push(parseFloat(item.ingresos));
+        gastosMensuales.push(parseFloat(item.gastos));
+    });
+
+    const canvasComparativa = document.getElementById('graficaComparativa');
+
+    if(canvasComparativa){
+
+        const ctx = canvasComparativa.getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        data: ingresosMensuales,
+                        backgroundColor: 'rgba(25,135,84,0.7)'
+                    },
+                    {
+                        label: 'Gastos',
+                        data: gastosMensuales,
+                        backgroundColor: 'rgba(220,53,69,0.7)'
                     }
-                }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
 
