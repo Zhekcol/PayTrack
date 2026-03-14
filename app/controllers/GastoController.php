@@ -12,10 +12,10 @@ class GastoController
     }
 
     public function index()
-{
-    $idUsuario = $_SESSION['usuario']['id_usuario'];
-    return $this->model->obtenerPorUsuario($idUsuario);
-}
+    {
+        $idUsuario = $_SESSION['usuario']['id_usuario'];
+        return $this->model->obtenerPorUsuario($idUsuario);
+    }
 
     public function store()
     {

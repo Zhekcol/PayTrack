@@ -130,6 +130,12 @@ switch ($url) {
     $controller->obtenerIngresosYGastosMensuales();
     break;
 
+    case 'movimientos':
+        require_once "../app/controllers/MovimientosController.php";
+        $controller = new MovimientosController($pdo);
+        $movimientos = $controller->index();
+        require '../views/movimientos/index.php';
+    break;
 
     default:
         echo "404 - Página no encontrada";

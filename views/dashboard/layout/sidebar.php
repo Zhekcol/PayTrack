@@ -20,6 +20,11 @@
                 💸 Gastos
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link text-white <?= ($_GET['url'] ?? '') === 'movimientos' ? 'active' : '' ?>" href="/movimientos">
+                📊 Movimientos
+            </a>
+        </li>
         <li class="nav-item mt-4">
             <a href="/auth/logout" class="nav-link text-danger">🚪 Cerrar sesión</a>
         </li>
