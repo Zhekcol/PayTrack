@@ -5,18 +5,18 @@
 
 <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 px-4">
 
-        <h3 class="mb-0">📊 Historial de Movimientos</h3>
+        <h3 class="mb-0"><i class="bi bi-layout-text-sidebar"></i> Historial de Movimientos</h3>
 
         <button class="btn btn-success" onclick="exportarExcel()">
-            📥 Exportar a Excel
+            <i class="bi bi-file-earmark-spreadsheet-fill"></i>
         </button>
 
     </div>
     <!-- <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
 
-            <h3 class="mb-0">📊 Historial de Movimientos</h3>
+            <h3 class="mb-0"><i class="bi bi-layout-text-sidebar"></i> Historial de Movimientos</h3>
 
             <button class="btn btn-success" onclick="exportarExcel()">
                 📥 Exportar a Excel

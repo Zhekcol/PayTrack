@@ -8,7 +8,7 @@ $usuario = $_SESSION['usuario'];
 
 <div class="col-12 col-md-10 p-4">
 
-    <h2 class="mb-4">Bienvenido, <?= htmlspecialchars($usuario['nombre']); ?> 👋</h2>
+    <h2 class="mb-4">Bienvenido, <?= htmlspecialchars($usuario['nombre']); ?> <i class="bi bi-person-raised-hand"></i></h2>
 
     <div class="row mt-4">
 

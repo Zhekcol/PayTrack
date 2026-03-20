@@ -3,7 +3,7 @@
 
 <div class="container mt-4">
 
-    <h3>💰 Ingresos</h3>
+    <h3><i class="bi bi-cash-coin"></i> Ingresos</h3>
 
     <form action="/ingresos/store" method="POST" class="row g-3 mb-4">
         <div class="col-md-4">
@@ -41,11 +41,11 @@
                 <td>
                     <a 
                         href="/ingresos/edit?id=<?= $ingreso['id']; ?>" 
-                        class="btn btn-sm btn-warning">
+                        class="btn btn-warning">
                         Editar
                     </a>
                     <button 
-                        class="btn btn-sm btn-danger"
+                        class="btn btn-danger"
                         data-bs-toggle="modal"
                         data-bs-target="#modalEliminar"
                         data-id="<?= $ingreso['id']; ?>">

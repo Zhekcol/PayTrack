@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
 <?php require_once __DIR__ . '/../layout/sidebar.php'; ?>
 
-<h3 class="mb-3">💸 Gastos</h3>
+<h3 class="mb-3"><i class="bi bi-cash-stack"></i> Gastos</h3>
 
 <form action="/gastos/store" method="POST" class="row g-2 mb-4">
     <div class="col-md-3">
@@ -17,7 +17,7 @@
         <input type="date" name="fecha" class="form-control" required>
     </div>
     <div class="col-md-2">
-        <button class="btn btn-danger w-100">Agregar</button>
+        <button class="btn btn-success w-100">Agregar</button>
     </div>
 </form>
 
@@ -39,11 +39,11 @@
                 <td>$<?= number_format($gasto['monto'], 0, ',', '.') ?></td>
                 <td><?= $gasto['fecha'] ?></td>
                 <td>
+                    <a href="/gastos/edit?id=<?= $gasto['id'] ?>" class="btn btn-primary">
+                        Editar
+                    </a>
                     <a href="/gastos/delete?id=<?= $gasto['id'] ?>" class="btn btn-danger">
                         Eliminar
-                    </a>
-                    <a href="/gastos/edit?id=<?= $gasto['id'] ?>" class="btn btn-warning">
-                        Editar
                     </a>
                 </td>
             </tr>
