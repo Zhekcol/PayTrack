@@ -1,0 +1,15 @@
+/vendor/
+
+.DS_Store
+Thumbs.db
+
+.env
+
+*.log
+
+config.local.php
+
+.vscode/
+.idea/
+
+node_modules/

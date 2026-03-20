@@ -5,10 +5,29 @@
 
 <div class="container mt-4">
 
-    <h3 class="mb-4">📊 Historial de Movimientos</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h3 class="mb-0">📊 Historial de Movimientos</h3>
+
+        <button class="btn btn-success" onclick="exportarExcel()">
+            📥 Exportar a Excel
+        </button>
+
+    </div>
+    <!-- <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+
+            <h3 class="mb-0">📊 Historial de Movimientos</h3>
+
+            <button class="btn btn-success" onclick="exportarExcel()">
+                📥 Exportar a Excel
+            </button>
+
+        </div> -->
 
     <div class="card shadow-sm">
         <div class="card-body">
+
+        <div id="alertaExportacion"></div>
 
         <div class="row mb-3">
 
@@ -188,5 +207,46 @@ filtroTipo.addEventListener("change", filtrarTabla);
 filtroMes.addEventListener("change", filtrarTabla);
 fechaDesde.addEventListener("change", filtrarTabla);
 fechaHasta.addEventListener("change", filtrarTabla);
+
+function hayFilasVisibles() {
+    const filas = document.querySelectorAll("#tablaMovimientos tbody tr");
+    return Array.from(filas).some(fila => fila.style.display !== "none");
+}
+
+function exportarExcel(){
+
+    if(!hayFilasVisibles()){
+        mostrarAlerta("No hay datos para exportar con los filtros actuales");
+        return;
+    }
+
+    const texto = buscador.value;
+    const tipo = filtroTipo.value;
+    const mes = filtroMes.value;
+    const desde = fechaDesde.value;
+    const hasta = fechaHasta.value;
+
+    let url = `/paytrack/public/index.php?url=movimientos/exportar-excel`;
+
+    url += `&texto=${encodeURIComponent(texto)}`;
+    url += `&tipo=${tipo}`;
+    url += `&mes=${mes}`;
+    url += `&desde=${desde}`;
+    url += `&hasta=${hasta}`;
+
+    window.open(url, '_blank');
+}
+
+function mostrarAlerta(mensaje){
+
+    const contenedor = document.getElementById("alertaExportacion");
+
+    contenedor.innerHTML = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+}
 
 </script>

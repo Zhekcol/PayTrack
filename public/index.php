@@ -137,6 +137,13 @@ switch ($url) {
         require '../views/movimientos/index.php';
     break;
 
+    case 'movimientos/exportar-excel':
+        require_once __DIR__ . '/../app/controllers/MovimientosController.php';
+
+        $controller = new MovimientosController($pdo);
+        $controller->exportarExcel();
+    break;
+
     default:
         echo "404 - Página no encontrada";
         break;
