@@ -10,13 +10,51 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-        <div class="mb-3">
-            <input 
-                type="text" 
-                id="buscarMovimiento" 
-                class="form-control" 
-                placeholder="Buscar por descripción o tipo..."
-            >
+        <div class="row mb-3">
+
+            <!-- Buscador -->
+            <div class="col-md-3">
+                <input type="text" id="buscarMovimiento" class="form-control" placeholder="Buscar...">
+            </div>
+
+            <!-- Tipo -->
+            <div class="col-md-2">
+                <select id="filtroTipo" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="ingreso">Ingresos</option>
+                    <option value="gasto">Gastos</option>
+                </select>
+            </div>
+
+            <!-- Mes -->
+            <div class="col-md-2">
+                <select id="filtroMes" class="form-select">
+                    <option value="">Mes</option>
+                    <option value="01">Enero</option>
+                    <option value="02">Febrero</option>
+                    <option value="03">Marzo</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Mayo</option>
+                    <option value="06">Junio</option>
+                    <option value="07">Julio</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
+
+            <!-- Desde -->
+            <div class="col-md-2">
+                <input type="date" id="fechaDesde" class="form-control">
+            </div>
+
+            <!-- Hasta -->
+            <div class="col-md-2">
+                <input type="date" id="fechaHasta" class="form-control">
+            </div>
+
         </div>
             <table class="table table-striped table-hover" id="tablaMovimientos">
 
@@ -35,7 +73,10 @@
 
                 <?php foreach($movimientos as $mov): ?>
 
-                    <tr>
+                    <tr 
+                        data-tipo="<?= strtolower($mov['tipo']) ?>" 
+                        data-fecha="<?= $mov['fecha'] ?>"
+                    >
 
                         <td><?= $mov['fecha'] ?></td>
 
@@ -87,25 +128,65 @@
 <script>
 
 const buscador = document.getElementById("buscarMovimiento");
+const filtroTipo = document.getElementById("filtroTipo");
+const filtroMes = document.getElementById("filtroMes");
+const fechaDesde = document.getElementById("fechaDesde");
+const fechaHasta = document.getElementById("fechaHasta");
 
-buscador.addEventListener("keyup", function(){
+function filtrarTabla(){
 
-    const filtro = buscador.value.toLowerCase();
+    const texto = buscador.value.toLowerCase();
+    const tipo = filtroTipo.value;
+    const mes = filtroMes.value;
+    const desde = fechaDesde.value;
+    const hasta = fechaHasta.value;
 
     const filas = document.querySelectorAll("#tablaMovimientos tbody tr");
 
     filas.forEach(fila => {
 
-        const textoFila = fila.textContent.toLowerCase();
+        const contenido = fila.textContent.toLowerCase();
+        const filaTipo = fila.getAttribute("data-tipo");
+        const fecha = fila.getAttribute("data-fecha");
+        const filaMes = fecha ? fecha.split("-")[1] : "";
 
-        if(textoFila.includes(filtro)){
-            fila.style.display = "";
-        }else{
-            fila.style.display = "none";
+        let mostrar = true;
+
+        // filtro por texto
+        if(!contenido.includes(texto)){
+            mostrar = false;
         }
+
+        // filtro por tipo
+        if(tipo && filaTipo !== tipo){
+            mostrar = false;
+        }
+
+        // filtro por mes
+        if(mes && filaMes !== mes){
+            mostrar = false;
+        }
+
+        // filtro por rango de fechas
+        if(desde && fecha < desde){
+            mostrar = false;
+        }
+
+        if(hasta && fecha > hasta){
+            mostrar = false;
+        }
+
+        fila.style.display = mostrar ? "" : "none";
 
     });
 
-});
+}
+
+// Eventos
+buscador.addEventListener("keyup", filtrarTabla);
+filtroTipo.addEventListener("change", filtrarTabla);
+filtroMes.addEventListener("change", filtrarTabla);
+fechaDesde.addEventListener("change", filtrarTabla);
+fechaHasta.addEventListener("change", filtrarTabla);
 
 </script>
