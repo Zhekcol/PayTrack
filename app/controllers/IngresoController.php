@@ -22,23 +22,62 @@ class IngresoController
     }
 
     public function store()
-    {
-        if (!isset($_SESSION['usuario'])) {
-            header("Location: /auth/login");
-            exit;
-        }
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-        $id_usuario = $_SESSION['usuario']['id_usuario']; 
+    header('Content-Type: application/json');
 
-        $descripcion = $_POST['descripcion'];
-        $monto = $_POST['monto'];
-        $fecha = $_POST['fecha'];
-
-        $this->model->crear($id_usuario, $descripcion, $monto, $fecha);
-
-        header("Location: /ingresos");
+    if (!isset($_SESSION['usuario'])) {
+        echo json_encode([
+            "success" => false,
+            "error" => "No autorizado"
+        ]);
         exit;
     }
+
+    $idUsuario = $_SESSION['usuario']['id_usuario'];
+
+    $descripcion = trim($_POST['descripcion'] ?? '');
+    $monto = $_POST['monto'] ?? 0;
+    $fecha = $_POST['fecha'] ?? '';
+
+    $monto = str_replace('.', '', $monto);
+    $monto = str_replace(',', '.', $monto);
+    $monto = floatval($monto);
+
+    if (empty($descripcion) || empty($fecha)) {
+        echo json_encode([
+            "success" => false,
+            "error" => "Todos los campos son obligatorios"
+        ]);
+        exit;
+    }
+
+    if (!is_numeric($monto) || $monto <= 0) {
+        echo json_encode([
+            "success" => false,
+            "error" => "El monto debe ser mayor a 0"
+        ]);
+        exit;
+    }
+
+    $ok = $this->model->crear($idUsuario, $descripcion, $monto, $fecha);
+
+    if ($ok) {
+        echo json_encode([
+            "success" => true
+        ]);
+    } else {
+        echo json_encode([
+            "success" => false,
+            "error" => "No se pudo guardar el ingreso"
+        ]);
+    }
+
+    exit;
+}
 
     public function edit()
     {
@@ -62,27 +101,85 @@ class IngresoController
 
     public function update()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        header('Content-Type: application/json');
+
         if (!isset($_SESSION['usuario'])) {
-            header("Location: /auth/login");
+            echo json_encode([
+                "success" => false,
+                "error" => "No autorizado"
+            ]);
             exit;
         }
 
-        $id = $_POST['id'];
-        $descripcion = $_POST['descripcion'];
-        $monto = $_POST['monto'];
-        $fecha = $_POST['fecha'];
+        $id = $_POST['id'] ?? null;
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $monto = $_POST['monto'] ?? 0;
+        $fecha = $_POST['fecha'] ?? '';
 
-        $this->model->actualizar(
+        // limpiar monto
+        $monto = str_replace('.', '', $monto);
+        $monto = str_replace(',', '.', $monto);
+        $monto = floatval($monto);
+
+        $idUsuario = $_SESSION['usuario']['id_usuario'];
+
+        if (!$id) {
+            echo json_encode([
+                "success" => false,
+                "error" => "ID inválido"
+            ]);
+            exit;
+        }
+
+        if (empty($descripcion) || empty($fecha)) {
+            echo json_encode([
+                "success" => false,
+                "error" => "Todos los campos son obligatorios"
+            ]);
+            exit;
+        }
+
+        if (!is_numeric($monto) || $monto <= 0) {
+            echo json_encode([
+                "success" => false,
+                "error" => "El monto debe ser mayor a 0"
+            ]);
+            exit;
+        }
+
+        $ingreso = $this->model->buscarPorId($id, $idUsuario);
+
+        if (!$ingreso) {
+            echo json_encode([
+                "success" => false,
+                "error" => "No tienes permiso para editar este ingreso"
+            ]);
+            exit;
+        }
+
+        $ok = $this->model->actualizar(
             $id,
-            $_SESSION['usuario']['id_usuario'],
+            $idUsuario,
             $descripcion,
             $monto,
             $fecha
         );
 
-        $_SESSION['success'] = "Ingreso actualizado correctamente";
+        if ($ok) {
+            echo json_encode([
+                "success" => true
+            ]);
+        } else {
+            echo json_encode([
+                "success" => false,
+                "error" => "No se pudo actualizar"
+            ]);
+        }
 
-        header("Location: /ingresos");
         exit;
     }
 

@@ -18,19 +18,64 @@ class GastoController
     }
 
     public function store()
-    {
-        $idUsuario = $_SESSION['usuario']['id_usuario'];
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-        $categoria = $_POST['categoria'];
-        $descripcion = $_POST['descripcion'];
-        $monto = $_POST['monto'];
-        $fecha = $_POST['fecha'];
+    header('Content-Type: application/json');
 
-        $this->model->crear($idUsuario, $categoria, $descripcion, $monto, $fecha);
-
-        header("Location: /gastos?success=1");
+    if (!isset($_SESSION['usuario'])) {
+        echo json_encode([
+            "success" => false,
+            "error" => "No autorizado"
+        ]);
         exit;
     }
+
+    $idUsuario = $_SESSION['usuario']['id_usuario'];
+
+    $categoria = trim($_POST['categoria'] ?? '');
+    $descripcion = trim($_POST['descripcion'] ?? '');
+    $monto = $_POST['monto'] ?? 0;
+    $fecha = $_POST['fecha'] ?? '';
+
+    $monto = str_replace('.', '', $monto);
+    $monto = str_replace(',', '.', $monto);
+    $monto = floatval($monto);
+
+
+    if (empty($categoria) || empty($descripcion) || empty($fecha)) {
+        echo json_encode([
+            "success" => false,
+            "error" => "Todos los campos son obligatorios"
+        ]);
+        exit;
+    }
+
+    if (!is_numeric($monto) || $monto <= 0) {
+        echo json_encode([
+            "success" => false,
+            "error" => "El monto debe ser mayor a 0"
+        ]);
+        exit;
+    }
+
+    $ok = $this->model->crear($idUsuario, $categoria, $descripcion, $monto, $fecha);
+
+    if ($ok) {
+        echo json_encode([
+            "success" => true
+        ]);
+    } else {
+        echo json_encode([
+            "success" => false,
+            "error" => "No se pudo guardar el gasto"
+        ]);
+    }
+
+    exit;
+}
 
     public function edit()
     {
@@ -57,8 +102,13 @@ class GastoController
             session_start();
         }
 
+        header('Content-Type: application/json');
+
         if (!isset($_SESSION['usuario'])) {
-            header("Location: /auth/login");
+            echo json_encode([
+                "success" => false,
+                "error" => "No autorizado"
+            ]);
             exit;
         }
 
@@ -68,26 +118,68 @@ class GastoController
         $monto = $_POST['monto'] ?? 0;
         $fecha = $_POST['fecha'] ?? '';
 
-        $idUsuario = $_SESSION['usuario']['id_usuario']; 
+        $monto = str_replace('.', '', $monto);
+        $monto = str_replace(',', '.', $monto);
+        $monto = floatval($monto);
 
-        if ($id) {
-            $this->model->actualizar(
-                $id,
-                $idUsuario,
-                $categoria,
-                $descripcion,
-                $monto,
-                $fecha
-            );
+        $idUsuario = $_SESSION['usuario']['id_usuario'];
 
-            $_SESSION['success'] = "Gasto actualizado correctamente";
+        if (!$id) {
+            echo json_encode([
+                "success" => false,
+                "error" => "ID inválido"
+            ]);
+            exit;
         }
 
-        header("Location: /gastos");
+        if (empty($categoria) || empty($descripcion) || empty($fecha)) {
+            echo json_encode([
+                "success" => false,
+                "error" => "Todos los campos son obligatorios"
+            ]);
+            exit;
+        }
+
+        if (!is_numeric($monto) || $monto <= 0) {
+            echo json_encode([
+                "success" => false,
+                "error" => "El monto debe ser mayor a 0"
+            ]);
+            exit;
+        }
+
+        $ingreso = $this->model->obtenerPorId($id, $idUsuario);
+
+        if (!$ingreso) {
+            echo json_encode([
+                "success" => false,
+                "error" => "No tienes permiso para editar este ingreso"
+            ]);
+            exit;
+        }
+
+        $ok = $this->model->actualizar(
+            $id,
+            $idUsuario,
+            $categoria,
+            $descripcion,
+            $monto,
+            $fecha
+        );
+
+        if ($ok) {
+            echo json_encode([
+                "success" => true
+            ]);
+        } else {
+            echo json_encode([
+                "success" => false,
+                "error" => "No se pudo actualizar"
+            ]);
+        }
+
         exit;
     }
-
-
 
     public function delete()
     {
