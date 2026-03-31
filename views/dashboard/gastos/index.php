@@ -57,6 +57,32 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<nav>
+    <ul class="pagination justify-content-center">
+
+        <!-- Anterior -->
+        <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?pagina=<?= $pagina - 1 ?>">Anterior</a>
+        </li>
+
+        <!-- Números -->
+        <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+            <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
+                <a class="page-link" href="?pagina=<?= $i ?>">
+                    <?= $i ?>
+                </a>
+            </li>
+        <?php endfor; ?>
+
+        <!-- Siguiente -->
+        <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?pagina=<?= $pagina + 1 ?>">Siguiente</a>
+        </li>
+
+    </ul>
+</nav>
+
 </div>
 <div class="modal fade" id="modalEliminar" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">

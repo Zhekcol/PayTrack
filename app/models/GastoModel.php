@@ -106,4 +106,33 @@ class GastoModel
         exit;
     }
 
+    public function obtenerPaginados($idUsuario, $limite, $offset)
+    {
+        $sql = "SELECT * FROM gastos 
+                WHERE id_usuario = :id_usuario
+                ORDER BY fecha DESC
+                LIMIT :limite OFFSET :offset";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id_usuario', $idUsuario, PDO::PARAM_INT);
+        $stmt->bindValue(':limite', (int)$limite, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function contar($idUsuario)
+    {
+        $sql = "SELECT COUNT(*) as total 
+                FROM gastos 
+                WHERE id_usuario = :id_usuario";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id_usuario' => $idUsuario]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
+
 }

@@ -17,14 +17,36 @@ class MovimientosController
 
     public function index()
     {
-        if (!isset($_SESSION['usuario'])) {
-            header("Location: /auth/login");
-            exit;
-        }
-
         $idUsuario = $_SESSION['usuario']['id_usuario'];
 
-        return $this->model->obtenerPorUsuario($idUsuario);
+        // filtros
+        $texto = $_GET['texto'] ?? '';
+        $tipo = $_GET['tipo'] ?? '';
+        $mes = $_GET['mes'] ?? '';
+        $desde = $_GET['desde'] ?? '';
+        $hasta = $_GET['hasta'] ?? '';
+
+        // paginado
+        $pagina = $_GET['pagina'] ?? 1;
+        $limite = 10;
+        $offset = ($pagina - 1) * $limite;
+
+        // datos
+        $movimientos = $this->model->filtrarMovimientosPaginado(
+            $idUsuario, $texto, $tipo, $mes, $desde, $hasta, $limite, $offset
+        );
+
+        $total = $this->model->contarMovimientos(
+            $idUsuario, $texto, $tipo, $mes, $desde, $hasta
+        );
+
+        $totalPaginas = ceil($total / $limite);
+
+        return [
+            'movimientos' => $movimientos,
+            'pagina' => $pagina,
+            'totalPaginas' => $totalPaginas
+        ];
     }
 
     public function exportarExcel()

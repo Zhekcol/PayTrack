@@ -83,4 +83,122 @@ class MovimientoModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function filtrarMovimientosPaginado($idUsuario, $texto, $tipo, $mes, $desde, $hasta, $limit, $offset)
+    {
+        $sqlBase = "
+            SELECT fecha, 'Ingreso' as tipo, descripcion, monto
+            FROM ingresos
+            WHERE id_usuario = :id_usuario
+
+            UNION ALL
+
+            SELECT fecha, 'Gasto' as tipo, descripcion, monto
+            FROM gastos
+            WHERE id_usuario = :id_usuario
+        ";
+
+        $params = ['id_usuario' => $idUsuario];
+
+        $sql = "SELECT * FROM ($sqlBase) as movimientos WHERE 1=1";
+
+        // búsqueda
+        if (!empty($texto)) {
+            $sql .= " AND (
+                descripcion LIKE LOWER(:texto)
+                OR tipo LIKE LOWER(:texto)
+                OR CAST(monto AS CHAR) LIKE :texto
+                OR DATE_FORMAT(fecha, '%Y-%m-%d') LIKE :texto
+            )";
+            $params['texto'] = "%$texto%";
+        }
+
+        // tipo
+        if (!empty($tipo)) {
+            $sql .= " AND LOWER(tipo) = :tipo";
+            $params['tipo'] = strtolower($tipo);
+        }
+
+        // mes
+        if (!empty($mes)) {
+            $sql .= " AND MONTH(fecha) = :mes";
+            $params['mes'] = (int)$mes;
+        }
+
+        // rango fechas
+        if (!empty($desde)) {
+            $sql .= " AND fecha >= :desde";
+            $params['desde'] = $desde;
+        }
+
+        if (!empty($hasta)) {
+            $sql .= " AND fecha <= :hasta";
+            $params['hasta'] = $hasta;
+        }
+
+        // orden + paginado
+        $sql .= " ORDER BY fecha DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue(":$key", $value);
+        }
+
+        $stmt->bindValue(":limit", (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(":offset", (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function contarMovimientos($idUsuario, $texto, $tipo, $mes, $desde, $hasta)
+    {
+        $sqlBase = "
+            SELECT fecha, 'Ingreso' as tipo, descripcion, monto
+            FROM ingresos
+            WHERE id_usuario = :id_usuario
+
+            UNION ALL
+
+            SELECT fecha, 'Gasto' as tipo, descripcion, monto
+            FROM gastos
+            WHERE id_usuario = :id_usuario
+        ";
+
+        $params = ['id_usuario' => $idUsuario];
+
+        $sql = "SELECT COUNT(*) as total FROM ($sqlBase) as movimientos WHERE 1=1";
+
+        if (!empty($texto)) {
+            $sql .= " AND descripcion LIKE :texto";
+            $params['texto'] = "%$texto%";
+        }
+
+        if (!empty($tipo)) {
+            $sql .= " AND LOWER(tipo) = :tipo";
+            $params['tipo'] = strtolower($tipo);
+        }
+
+        if (!empty($mes)) {
+            $sql .= " AND MONTH(fecha) = :mes";
+            $params['mes'] = (int)$mes;
+        }
+
+        if (!empty($desde)) {
+            $sql .= " AND fecha >= :desde";
+            $params['desde'] = $desde;
+        }
+
+        if (!empty($hasta)) {
+            $sql .= " AND fecha <= :hasta";
+            $params['hasta'] = $hasta;
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    }
 }

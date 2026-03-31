@@ -11,14 +11,30 @@ class IngresoController
         $this->model = new IngresoModel($pdo);
     }
 
-    public function index($idUsuario)
+        public function index()
     {
         if (!isset($_SESSION['usuario'])) {
             header("Location: /auth/login");
             exit;
         }
 
-        return $this->model->listarPorUsuario($idUsuario);
+        $idUsuario = $_SESSION['usuario']['id_usuario'];
+
+        $pagina = $_GET['pagina'] ?? 1;
+        $limite = 10;
+
+        $offset = ($pagina - 1) * $limite;
+
+        $ingresos = $this->model->obtenerPaginados($idUsuario, $limite, $offset);
+
+        $totalRegistros = $this->model->contar($idUsuario);
+        $totalPaginas = ceil($totalRegistros / $limite);
+
+        return [
+            'ingresos' => $ingresos,
+            'pagina' => $pagina,
+            'totalPaginas' => $totalPaginas
+        ];
     }
 
     public function store()

@@ -32,16 +32,16 @@
         <div class="row mb-3">
 
             <!-- Buscador -->
-            <div class="col-md-3">
-                <input type="text" id="buscarMovimiento" class="form-control" placeholder="Buscar...">
+            <div class="col-md-2">
+                <input type="text" id="buscarMovimiento" class="form-control" placeholder="Buscar..." value="<?= $_GET['texto'] ?? '' ?>">
             </div>
 
             <!-- Tipo -->
             <div class="col-md-2">
                 <select id="filtroTipo" class="form-select">
                     <option value="">Todos</option>
-                    <option value="ingreso">Ingresos</option>
-                    <option value="gasto">Gastos</option>
+                    <option value="ingreso" <?= (($_GET['tipo'] ?? '')=='ingreso')?'selected':'' ?>>Ingresos</option>
+                    <option value="gasto" <?= (($_GET['tipo'] ?? '')=='gasto')?'selected':'' ?>>Gastos</option>
                 </select>
             </div>
 
@@ -49,29 +49,39 @@
             <div class="col-md-2">
                 <select id="filtroMes" class="form-select">
                     <option value="">Mes</option>
-                    <option value="01">Enero</option>
-                    <option value="02">Febrero</option>
-                    <option value="03">Marzo</option>
-                    <option value="04">Abril</option>
-                    <option value="05">Mayo</option>
-                    <option value="06">Junio</option>
-                    <option value="07">Julio</option>
-                    <option value="08">Agosto</option>
-                    <option value="09">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
+                    <option value="01" <?= (($_GET['mes'] ?? '')=='01')?'selected':'' ?>>Enero</option>
+                    <option value="02" <?= (($_GET['mes'] ?? '')=='02')?'selected':'' ?>>Febrero</option>
+                    <option value="03" <?= (($_GET['mes'] ?? '')=='03')?'selected':'' ?>>Marzo</option>
+                    <option value="04" <?= (($_GET['mes'] ?? '')=='04')?'selected':'' ?>>Abril</option>
+                    <option value="05" <?= (($_GET['mes'] ?? '')=='05')?'selected':'' ?>>Mayo</option>
+                    <option value="06" <?= (($_GET['mes'] ?? '')=='06')?'selected':'' ?>>Junio</option>
+                    <option value="07" <?= (($_GET['mes'] ?? '')=='07')?'selected':'' ?>>Julio</option>
+                    <option value="08" <?= (($_GET['mes'] ?? '')=='08')?'selected':'' ?>>Agosto</option>
+                    <option value="09" <?= (($_GET['mes'] ?? '')=='09')?'selected':'' ?>>Septiembre</option>
+                    <option value="10" <?= (($_GET['mes'] ?? '')=='10')?'selected':'' ?>>Octubre</option>
+                    <option value="11" <?= (($_GET['mes'] ?? '')=='11')?'selected':'' ?>>Noviembre</option>
+                    <option value="12" <?= (($_GET['mes'] ?? '')=='12')?'selected':'' ?>>Diciembre</option>
                 </select>
             </div>
 
             <!-- Desde -->
-            <div class="col-md-2">
-                <input type="date" id="fechaDesde" class="form-control">
+            <div class="col-md-3">
+                <input type="date" id="fechaDesde" class="form-control" value="<?= $_GET['desde'] ?? '' ?>">
             </div>
 
             <!-- Hasta -->
-            <div class="col-md-2">
-                <input type="date" id="fechaHasta" class="form-control">
+            <div class="col-md-3">
+                <input type="date" id="fechaHasta" class="form-control" value="<?= $_GET['hasta'] ?? '' ?>">
+            </div>
+            
+            <div class="col-md-12 d-flex justify-content-end gap-2 mt-2">
+                <button class="btn btn-primary" onclick="aplicarFiltros()">
+                    <i class="bi bi-funnel-fill"></i> Aplicar filtros
+                </button>
+
+                <button class="btn btn-outline-secondary" onclick="limpiarFiltros()">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </button>
             </div>
 
         </div>
@@ -137,6 +147,40 @@
 
             </table>
 
+            <?php $query = $_GET; ?>
+
+            <nav>
+            <ul class="pagination justify-content-center">
+
+                <!-- Anterior -->
+                <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+                    <a class="page-link"
+                    href="?<?= http_build_query(array_merge($query, ['pagina' => $pagina - 1])) ?>">
+                    Anterior
+                    </a>
+                </li>
+
+                <!-- Números -->
+                <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                    <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
+                        <a class="page-link"
+                        href="?<?= http_build_query(array_merge($query, ['pagina' => $i])) ?>">
+                            <?= $i ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+
+                <!-- Siguiente -->
+                <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+                    <a class="page-link"
+                    href="?<?= http_build_query(array_merge($query, ['pagina' => $pagina + 1])) ?>">
+                    Siguiente
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
         </div>
     </div>
 
@@ -152,73 +196,47 @@ const filtroMes = document.getElementById("filtroMes");
 const fechaDesde = document.getElementById("fechaDesde");
 const fechaHasta = document.getElementById("fechaHasta");
 
-function filtrarTabla(){
+function aplicarFiltros(){
 
-    const texto = buscador.value.toLowerCase();
+    const texto = buscador.value;
     const tipo = filtroTipo.value;
     const mes = filtroMes.value;
     const desde = fechaDesde.value;
     const hasta = fechaHasta.value;
 
-    const filas = document.querySelectorAll("#tablaMovimientos tbody tr");
+    let url = `/paytrack/public/index.php?url=movimientos`;
 
-    filas.forEach(fila => {
+    if(texto) url += `&texto=${encodeURIComponent(texto)}`;
+    if(tipo) url += `&tipo=${tipo}`;
+    if(mes) url += `&mes=${mes}`;
+    if(desde) url += `&desde=${desde}`;
+    if(hasta) url += `&hasta=${hasta}`;
 
-        const contenido = fila.textContent.toLowerCase();
-        const filaTipo = fila.getAttribute("data-tipo");
-        const fecha = fila.getAttribute("data-fecha");
-        const filaMes = fecha ? fecha.split("-")[1] : "";
+    url += `&pagina=1`;
 
-        let mostrar = true;
-
-        // filtro por texto
-        if(!contenido.includes(texto)){
-            mostrar = false;
-        }
-
-        // filtro por tipo
-        if(tipo && filaTipo !== tipo){
-            mostrar = false;
-        }
-
-        // filtro por mes
-        if(mes && filaMes !== mes){
-            mostrar = false;
-        }
-
-        // filtro por rango de fechas
-        if(desde && fecha < desde){
-            mostrar = false;
-        }
-
-        if(hasta && fecha > hasta){
-            mostrar = false;
-        }
-
-        fila.style.display = mostrar ? "" : "none";
-
-    });
-
+    window.location.href = url;
 }
 
-// Eventos
-buscador.addEventListener("keyup", filtrarTabla);
-filtroTipo.addEventListener("change", filtrarTabla);
-filtroMes.addEventListener("change", filtrarTabla);
-fechaDesde.addEventListener("change", filtrarTabla);
-fechaHasta.addEventListener("change", filtrarTabla);
+function limpiarFiltros(){
 
-function hayFilasVisibles() {
-    const filas = document.querySelectorAll("#tablaMovimientos tbody tr");
-    return Array.from(filas).some(fila => fila.style.display !== "none");
+    // limpiar inputs
+    buscador.value = "";
+    filtroTipo.value = "";
+    filtroMes.value = "";
+    fechaDesde.value = "";
+    fechaHasta.value = "";
+
+    // recargar sin filtros
+    window.location.href = `/paytrack/public/index.php?url=movimientos`;
 }
+
+buscador.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+        aplicarFiltros();
+    }
+});
 
 function exportarExcel(){
-
-    if(!hayFilasVisibles()){
-        mostrarAlerta("No hay datos para exportar con los filtros actuales");
-        return;
-    }
 
     const texto = buscador.value;
     const tipo = filtroTipo.value;
@@ -228,11 +246,11 @@ function exportarExcel(){
 
     let url = `/paytrack/public/index.php?url=movimientos/exportar-excel`;
 
-    url += `&texto=${encodeURIComponent(texto)}`;
-    url += `&tipo=${tipo}`;
-    url += `&mes=${mes}`;
-    url += `&desde=${desde}`;
-    url += `&hasta=${hasta}`;
+    if(texto) url += `&texto=${encodeURIComponent(texto)}`;
+    if(tipo) url += `&tipo=${tipo}`;
+    if(mes) url += `&mes=${mes}`;
+    if(desde) url += `&desde=${desde}`;
+    if(hasta) url += `&hasta=${hasta}`;
 
     window.open(url, '_blank');
 }

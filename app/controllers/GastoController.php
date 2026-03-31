@@ -13,8 +13,28 @@ class GastoController
 
     public function index()
     {
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: /auth/login");
+            exit;
+        }
+
         $idUsuario = $_SESSION['usuario']['id_usuario'];
-        return $this->model->obtenerPorUsuario($idUsuario);
+
+        $pagina = $_GET['pagina'] ?? 1;
+        $limite = 10;
+
+        $offset = ($pagina - 1) * $limite;
+
+        $gastos = $this->model->obtenerPaginados($idUsuario, $limite, $offset);
+
+        $totalRegistros = $this->model->contar($idUsuario);
+        $totalPaginas = ceil($totalRegistros / $limite);
+
+        return [
+            'gastos' => $gastos,
+            'pagina' => $pagina,
+            'totalPaginas' => $totalPaginas
+        ];
     }
 
     public function store()
