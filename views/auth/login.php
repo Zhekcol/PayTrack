@@ -59,7 +59,7 @@ $tipo    = isset($_GET['tipo']) ? $_GET['tipo'] : ''; // success | danger
                     </form>
 
                     <div class="text-center mt-3">
-                        <a href="/auth/recuperar" class="text-decoration-none">
+                        <a href="/auth/forgot" class="text-decoration-none">
                             ¿Olvidaste tu contraseña?
                         </a>
                     </div>

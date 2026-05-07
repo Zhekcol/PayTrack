@@ -144,5 +144,51 @@ class UserModel {
         }
     }
 
+    public function verificarCodigoRecuperacion($email, $codigo)
+    {
+        try {
+
+            $sql = "SELECT * FROM usuarios
+                    WHERE email = :email
+                    AND codigo_recuperacion = :codigo
+                    AND codigo_expira > NOW()
+                    LIMIT 1";
+
+            $query = $this->pdo->prepare($sql);
+
+            $query->execute([
+                'email' => $email,
+                'codigo' => $codigo
+            ]);
+
+            return $query->fetch(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function actualizarPasswordPorEmail($email, $passwordHash)
+    {
+        try {
+
+            $sql = "UPDATE usuarios
+                    SET password = :password,
+                        codigo_recuperacion = NULL,
+                        codigo_expira = NULL
+                    WHERE email = :email";
+
+            $query = $this->pdo->prepare($sql);
+
+            return $query->execute([
+                'password' => $passwordHash,
+                'email' => $email
+            ]);
+
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
 }
 ?>

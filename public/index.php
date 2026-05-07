@@ -155,6 +155,51 @@ switch ($url) {
         $controller = new MovimientosController($pdo);
         $controller->exportarExcel();
     break;
+    
+    case 'auth/forgot':
+    require_once __DIR__ . '/../app/controllers/AuthController.php';
+
+    $controller = new AuthController($pdo);
+    $controller->forgotPassword();
+    break;
+
+    case 'auth/enviar-codigo':
+        require_once __DIR__ . '/../app/controllers/AuthController.php';
+
+        $controller = new AuthController($pdo);
+        $controller->enviarCodigo();
+    break;
+
+    case 'auth/verificar-codigo':
+
+        require_once __DIR__ . '/../app/controllers/AuthController.php';
+
+        $controller = new AuthController();
+
+        // POST → validar código
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->verificarCodigo();
+        } 
+        // GET → mostrar vista
+        else {
+            require_once __DIR__ . '/../views/auth/verificar_codigo.php';
+        }
+
+    break;
+
+    case 'auth/nueva-password':
+        require_once __DIR__ . '/../app/controllers/AuthController.php';
+
+        $controller = new AuthController($pdo);
+        $controller->nuevaPassword();
+    break;
+
+    case 'auth/reset-password':
+        require_once __DIR__ . '/../app/controllers/AuthController.php';
+
+        $controller = new AuthController($pdo);
+        $controller->resetPassword();
+    break;
 
     default:
         echo "404 - Página no encontrada";
